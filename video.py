@@ -44,7 +44,7 @@ class MainWindow(QMainWindow):
         )
 
         self.webview.load(
-            QUrl("https://vkvd113.mycdn.me/expires/1672234522703/clientType/13/srcIp/194.147.111.70/type/2/mid/2158795958382/id/2623654005480/ms/185.226.53.157/zs/11/srcAg/SAFARI_MAC/ct/28/sig/bwn30tClCdQ/ondemand/hls2_2623654005480.CO7QkJLqPjjLtZ3BAUjuwvnZAVAoWA06Qjb_YUrLoA==.m3u8")
+            QUrl("https://www.youtube.com/embed/khwESuMfPA4")
         )
 
         lay = QVBoxLayout(central_widget)

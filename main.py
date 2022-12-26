@@ -9,6 +9,11 @@ from PIL import Image
 from PIL.ImageQt import ImageQt
 from PyQt5.Qt import QImage, pyqtSignal
 from PyQt5 import uic, QtGui, QtCore
+from PyQt5.QtCore import (
+    QUrl, 
+    Qt, 
+    pyqtSlot
+)
 from PyQt5.QtWidgets import (
     QApplication,
     QMainWindow,
@@ -17,9 +22,20 @@ from PyQt5.QtWidgets import (
     QPushButton,
     QHBoxLayout,
     QToolButton,
-    QInputDialog
+    QInputDialog,
 )
-from PyQt5.QtGui import QCursor, QPixmap, QColor, QPainter, QBrush
+from PyQt5.QtGui import (
+    QCursor, 
+    QPixmap, 
+    QColor, 
+    QPainter, 
+    QBrush
+)
+from PyQt5.QtWebEngineWidgets import (
+    QWebEnginePage, 
+    QWebEngineSettings, 
+    QWebEngineView
+)
 
 
 ID = 0
@@ -46,7 +62,7 @@ def init(self):
 
 def update_id():
     global ID
-    file = open('ID.txt', 'r', encoding='UTF-8')
+    file = open("ID.txt", "r", encoding="UTF-8")
     ID = int(file.read())
     file.close()
 
@@ -113,9 +129,12 @@ class Registration(QMainWindow):
                     "Пароль должен состоять из цифр и букв латинского алфавита"
                 )
             else:
-                text, ok = QInputDialog.getText(self, 'Регистрация',
-                    'Введите пароль и нажмите на кнопку "OK" для подтверждения регистрации')
-                    
+                text, ok = QInputDialog.getText(
+                    self,
+                    "Регистрация",
+                    'Введите пароль и нажмите на кнопку "OK" для подтверждения регистрации',
+                )
+
                 if not ok:
                     return 0
 
@@ -132,7 +151,7 @@ class Registration(QMainWindow):
                     ),
                 ).fetchall()
                 con.commit()
-                file = open('ID.txt', 'w', encoding='UTF-8')
+                file = open("ID.txt", "w", encoding="UTF-8")
                 new_id = int(
                     cur.execute(
                         f"""SELECT id FROM Users WHERE login = ?""",
@@ -179,7 +198,7 @@ class Login(QMainWindow):
             ).hexdigest()
 
             if password == current_password:
-                file = open('ID.txt', 'w', encoding='UTF-8')
+                file = open("ID.txt", "w", encoding="UTF-8")
                 new_id = int(
                     cur.execute(
                         f"""SELECT id FROM Users WHERE login = ?""",
@@ -209,14 +228,12 @@ class MainWindow(QMainWindow):
         global images
         uic.loadUi("./ui/movech_allfilms.ui", self)
         update_id()
-        print(ID)
         result = cur.execute(f"""SELECT * FROM Users WHERE id = ?""", (ID,)).fetchall()[0]
 
         self.sidebar_name.setText(result[1])
         self.sidebar_surname.setText(result[2].upper())
 
         data = cur.execute(f"""SELECT * FROM Films""").fetchall()
-        print(data)
         height = 0
 
         if len(data) % 4 == 0:
@@ -292,19 +309,15 @@ class Search(QMainWindow):
         else:
             self.images = images
         self.initUI()
-        print(self.index)
         init(self)
 
     def initUI(self):
         uic.loadUi("./ui/movech_search.ui", self)
 
-        if len(self.data[self.index:]) == 0:
+        if len(self.data[self.index :]) == 0:
             self.label = QLabel(self.main)
             self.label.setGeometry(QtCore.QRect(25, 230, 691, 91))
-            self.label.setStyleSheet(
-                "color: rgb(239, 239, 239);" 
-                "font-size: 20px"
-            )
+            self.label.setStyleSheet("color: rgb(239, 239, 239);" "font-size: 20px")
             self.label.setTextFormat(QtCore.Qt.AutoText)
             self.label.setScaledContents(False)
             self.label.setWordWrap(True)
@@ -313,7 +326,7 @@ class Search(QMainWindow):
             self.all_films.clicked.connect(self.return_main)
             return 0
 
-        self.prev = QPushButton('назад', self.main)
+        self.prev = QPushButton("назад", self.main)
         self.prev.setGeometry(300, 1100, 150, 60)
         self.prev.setStyleSheet(
             "border: none;"
@@ -323,7 +336,7 @@ class Search(QMainWindow):
             "border-radius: 15px;"
         )
 
-        self.next = QPushButton('вперед', self.main)
+        self.next = QPushButton("вперед", self.main)
         self.next.setGeometry(500, 1100, 150, 60)
         self.next.setStyleSheet(
             "border: none;"
@@ -337,7 +350,7 @@ class Search(QMainWindow):
         self.prev.setCursor(QCursor(QtCore.Qt.PointingHandCursor))
         self.prev.clicked.connect(self.swipe_prev)
 
-        for i in range(len(self.data[self.index:(self.index + 3)])):
+        for i in range(len(self.data[self.index : (self.index + 3)])):
             film = self.data[self.index + i]
 
             image = QImage()
@@ -360,11 +373,10 @@ class Search(QMainWindow):
             self.block_info.setObjectName("block_info")
 
             self.info_title = QLabel(self.block_info)
+            self.info_title.setCursor(QCursor(QtCore.Qt.PointingHandCursor))
             self.info_title.setGeometry(QtCore.QRect(10, 0, 700, 51))
             self.info_title.setStyleSheet(
-                "color: #fff;" 
-                "font-size: 30px;" 
-                "font-weight: bold;"
+                "color: #fff;" "font-size: 30px;" "font-weight: bold;"
             )
             self.info_title.setTextFormat(QtCore.Qt.PlainText)
             self.info_title.setObjectName("info_title")
@@ -372,10 +384,7 @@ class Search(QMainWindow):
 
             self.label = QLabel(self.block_info)
             self.label.setGeometry(QtCore.QRect(10, 60, 691, 91))
-            self.label.setStyleSheet(
-                "color: rgb(239, 239, 239);" 
-                "font-size: 20px"
-            )
+            self.label.setStyleSheet("color: rgb(239, 239, 239);" "font-size: 20px")
             self.label.setTextFormat(QtCore.Qt.AutoText)
             self.label.setScaledContents(False)
             self.label.setWordWrap(True)
@@ -396,12 +405,16 @@ class Search(QMainWindow):
             return [await i.content.read() for i in responces]
 
     def swipe_next(self):
-        self.search_window = Search(self.x(), self.y(), self.data, self.index + 3, images=self.images)
+        self.search_window = Search(
+            self.x(), self.y(), self.data, self.index + 3, images=self.images
+        )
         self.search_window.show()
         self.hide()
 
     def swipe_prev(self):
-        self.search_window = Search(self.x(), self.y(), self.data, self.index - 3, images=self.images)
+        self.search_window = Search(
+            self.x(), self.y(), self.data, self.index - 3, images=self.images
+        )
         self.search_window.show()
         self.hide()
 
@@ -439,6 +452,15 @@ class Film(QMainWindow):
         pixmap = pixmap.scaled(191, 281)
         self.block_img.setPixmap(pixmap)
         self.all_films.clicked.connect(self.return_main)
+
+        self.webview = QWebEngineView(self.block_content)
+        self.webview.settings().setAttribute(
+            QWebEngineSettings.FullScreenSupportEnabled, True
+        )
+        self.webview.load(
+            QUrl("https://www.youtube.com/embed/khwESuMfPA4")
+        )
+        self.webview.setGeometry(30, 350, 851, 481)
 
     def return_main(self):
         self.main = MainWindow(self.x(), self.y())

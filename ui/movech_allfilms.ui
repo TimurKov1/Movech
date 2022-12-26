@@ -147,30 +147,6 @@ color: #fff;</string>
         <string>Все фильмы</string>
        </property>
       </widget>
-      <widget class="QLabel" name="nav_item_2">
-       <property name="geometry">
-        <rect>
-         <x>0</x>
-         <y>58</y>
-         <width>191</width>
-         <height>31</height>
-        </rect>
-       </property>
-       <property name="font">
-        <font>
-         <pointsize>-1</pointsize>
-        </font>
-       </property>
-       <property name="cursor">
-        <cursorShape>PointingHandCursor</cursorShape>
-       </property>
-       <property name="styleSheet">
-        <string notr="true">font-size: 24px; color: #fff;</string>
-       </property>
-       <property name="text">
-        <string>Настройки</string>
-       </property>
-      </widget>
      </widget>
     </widget>
    </widget>

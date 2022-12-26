@@ -141,24 +141,6 @@ border: none;</string>
         <string>Все фильмы</string>
        </property>
       </widget>
-      <widget class="QPushButton" name="settings">
-       <property name="geometry">
-        <rect>
-         <x>-27</x>
-         <y>60</y>
-         <width>171</width>
-         <height>32</height>
-        </rect>
-       </property>
-       <property name="styleSheet">
-        <string notr="true">font-size: 24px; 
-color: #fff;
-border: none;</string>
-       </property>
-       <property name="text">
-        <string>Настройки</string>
-       </property>
-      </widget>
      </widget>
     </widget>
    </widget>
@@ -509,7 +491,7 @@ font-size: 18px;</string>
             </property>
            </widget>
           </widget>
-          <widget class="QVideoWidget" name="widget" native="true">
+          <widget class="QWidget" name="video" native="true">
            <property name="geometry">
             <rect>
              <x>30</x>
