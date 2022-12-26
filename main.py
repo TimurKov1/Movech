@@ -17,6 +17,7 @@ from PyQt5.QtWidgets import (
     QPushButton,
     QHBoxLayout,
     QToolButton,
+    QInputDialog
 )
 from PyQt5.QtGui import QCursor, QPixmap, QColor, QPainter, QBrush
 
@@ -112,6 +113,12 @@ class Registration(QMainWindow):
                     "Пароль должен состоять из цифр и букв латинского алфавита"
                 )
             else:
+                text, ok = QInputDialog.getText(self, 'Регистрация',
+                    'Введите пароль и нажмите на кнопку "OK" для подтверждения регистрации')
+                    
+                if not ok:
+                    return 0
+
                 cur.execute(
                     f"""INSERT INTO Users(name, surname, login, password, date) VALUES(?, ?, ?, ?, ?)""",
                     (
