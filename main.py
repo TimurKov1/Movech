@@ -44,10 +44,13 @@ images = []
 
 def avatar():
     result = cur.execute(f"""SELECT * FROM Users WHERE id = ?""", (ID,)).fetchall()[0]
+
     if result[5] == None:
         image = Image.open("./images/user.png")
+
     else:
         image = Image.open(result[5])
+
     return image
 
 
@@ -62,6 +65,7 @@ def init(self):
 
 def update_id():
     global ID
+
     file = open("ID.txt", "r", encoding="UTF-8")
     ID = int(file.read())
     file.close()
@@ -111,6 +115,7 @@ class Registration(QMainWindow):
         ).fetchall()
 
         if len(result) == 0:
+
             if (
                 self.name.text() == ""
                 or self.surname.text() == ""
@@ -118,8 +123,10 @@ class Registration(QMainWindow):
                 or self.password.text() == ""
             ):
                 self.error.setText("Заполните все поля")
+
             elif len(self.password.text()) < 8:
                 self.error.setText("Пароль должен иметь длину не менее 8 символов")
+
             elif (
                 self.password.text().isdigit()
                 or self.password.text().isalpha()
@@ -128,6 +135,7 @@ class Registration(QMainWindow):
                 self.error.setText(
                     "Пароль должен состоять из цифр и букв латинского алфавита"
                 )
+
             else:
                 text, ok = QInputDialog.getText(
                     self,
@@ -151,6 +159,7 @@ class Registration(QMainWindow):
                     ),
                 ).fetchall()
                 con.commit()
+
                 file = open("ID.txt", "w", encoding="UTF-8")
                 new_id = int(
                     cur.execute(
@@ -164,6 +173,7 @@ class Registration(QMainWindow):
                 self.main_window = MainWindow(self.x(), self.y())
                 self.main_window.show()
                 self.hide()
+
         else:
             self.error.setText("Такой логин уже существует")
 
@@ -211,8 +221,10 @@ class Login(QMainWindow):
                 self.main_window = MainWindow(self.x(), self.y())
                 self.main_window.show()
                 self.hide()
+
             else:
                 self.error.setText("Неверный пароль")
+
         else:
             self.error.setText("Такого пользователя не существует")
 
@@ -238,17 +250,21 @@ class MainWindow(QMainWindow):
 
         if len(data) % 4 == 0:
             height = len(data) // 4 * 330
+
         else:
             height = (len(data) // 4 + 1) * 330
 
         self.block.resize(930, height)
+
         if len(images) == 0:
             images = asyncio.run(self.show_images(data))
         count = 0
 
         for i in images:
+
             if count == 0:
                 self.layout = QHBoxLayout(self)
+
             elif count % 4 == 0:
                 self.films.addLayout(self.layout)
                 self.layout = QHBoxLayout(self)
@@ -279,6 +295,7 @@ class MainWindow(QMainWindow):
                 tasks.append(asyncio.create_task(session.get(data[i][-1], ssl=False)))
 
             responces = await asyncio.gather(*tasks)
+
             return [await i.content.read() for i in responces]
 
     def show_film(self):
@@ -304,10 +321,13 @@ class Search(QMainWindow):
         self.setGeometry(x, y, 1300, 764)
         self.data = data
         self.index = index
+
         if images == False:
             self.images = asyncio.run(self.show_images(data))
+
         else:
             self.images = images
+
         self.initUI()
         init(self)
 
@@ -324,6 +344,7 @@ class Search(QMainWindow):
             self.label.setObjectName("label")
             self.label.setText("Нет результатов")
             self.all_films.clicked.connect(self.return_main)
+
             return 0
 
         self.prev = QPushButton("назад", self.main)
@@ -345,8 +366,10 @@ class Search(QMainWindow):
             "font-size: 28px;"
             "border-radius: 15px;"
         )
+
         self.next.setCursor(QCursor(QtCore.Qt.PointingHandCursor))
         self.next.clicked.connect(self.swipe_next)
+
         self.prev.setCursor(QCursor(QtCore.Qt.PointingHandCursor))
         self.prev.clicked.connect(self.swipe_prev)
 
@@ -392,6 +415,7 @@ class Search(QMainWindow):
             self.label.setText(f"{film[3][:170]}...")
 
             self.block_content_layout.addWidget(self.block_content_item)
+
         self.all_films.clicked.connect(self.return_main)
 
     async def show_images(self, data):
@@ -402,6 +426,7 @@ class Search(QMainWindow):
                 tasks.append(asyncio.create_task(session.get(data[i][-1], ssl=False)))
 
             responces = await asyncio.gather(*tasks)
+
             return [await i.content.read() for i in responces]
 
     def swipe_next(self):
@@ -443,13 +468,18 @@ class Film(QMainWindow):
         self.country.setText(f"{result[5]}")
         self.genre.setText(f"{result[6]}")
         self.director.setText(f"{result[7]}")
+
         if result[8] != "":
             self.budget.setText(f"${result[8]}")
+
         else:
             self.budget.setText(f"Нет данных")
+
         self.description.setText(f"{result[3]}")
+
         pixmap = QPixmap(self.image)
         pixmap = pixmap.scaled(191, 281)
+        
         self.block_img.setPixmap(pixmap)
         self.all_films.clicked.connect(self.return_main)
 
